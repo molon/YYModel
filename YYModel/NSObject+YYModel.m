@@ -396,6 +396,7 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     YYEncodingType _type;        ///< property's type
     YYEncodingNSType _nsType;    ///< property's Foundation type
     BOOL _isCNumber;             ///< is c number type
+    BOOL _isContainer;           ///< is container(NSArray,NSMutableArray,NSDictionary,NSMutableDictionary,NSSet,NSMutableSet)
     Class _cls;                  ///< property's class, or nil
     Class _genericCls;           ///< container's generic class, or nil if threr's no generic class
     SEL _getter;                 ///< getter, or nil if the instances cannot respond
@@ -420,22 +421,36 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
 @implementation _YYModelPropertyMeta
 + (instancetype)metaWithClassInfo:(YYClassInfo *)classInfo propertyInfo:(YYClassPropertyInfo *)propertyInfo generic:(Class)generic {
     _YYModelPropertyMeta *meta = [self new];
-
-    if (!generic && (propertyInfo.type & YYEncodingTypeMask) == YYEncodingTypeObject && propertyInfo.protocolNames.count==1) {
-        //if the only protocolName is a class nams, as the generic class. // pseudo-generic
-        generic = NSClassFromString([propertyInfo.protocolNames firstObject]);
-    }
     
     meta->_name = propertyInfo.name;
     meta->_type = propertyInfo.type;
     meta->_info = propertyInfo;
-    meta->_genericCls = generic;
     
     if ((meta->_type & YYEncodingTypeMask) == YYEncodingTypeObject) {
         meta->_nsType = YYClassGetNSType(propertyInfo.cls);
+        meta->_isContainer =
+            meta->_nsType == YYEncodingTypeNSArray||
+            meta->_nsType == YYEncodingTypeNSMutableArray||
+            meta->_nsType == YYEncodingTypeNSDictionary||
+            meta->_nsType == YYEncodingTypeNSMutableDictionary||
+            meta->_nsType == YYEncodingTypeNSSet||
+            meta->_nsType == YYEncodingTypeNSMutableSet;
+        if (meta->_isContainer && !generic && propertyInfo.protocolNames.count > 0) {
+            //support pseudo generic class with protocol name
+            for (NSString *protocol in propertyInfo.protocolNames) {
+                Class cls = objc_getClass(protocol.UTF8String);
+                if (cls) {
+                    generic = cls;
+                    break;
+                }
+            }
+        }
     } else {
         meta->_isCNumber = YYEncodingTypeIsCNumber(meta->_type);
     }
+    
+    meta->_genericCls = generic;
+    
     if ((meta->_type & YYEncodingTypeMask) == YYEncodingTypeStruct) {
         /*
          It seems that NSKeyedUnarchiver cannot decode NSValue except these structs:
