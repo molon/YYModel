@@ -213,6 +213,29 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSString *)yy_modelDescription;
 
+/**
+ Reset the value of property to default, CNumbers will be 0, objects(contain NSNumber) will be nil
+ If some values has special default values, see: + (nullable NSDictionary<NSString *,id> *)modelCustomPropertyDefaultValueMapper;
+ @param key property key
+ */
+- (void)yy_resetPropertyValueForKey:(NSString*)key;
+
+/**
+ Reset all property values to default, CNumbers will be 0, objects(contain NSNumber) will be nil
+ If some values has special default values, see: + (nullable NSDictionary<NSString *,id> *)modelCustomPropertyDefaultValueMapper;
+ If implements `+modelCustomPropertyDefaultValueMapper`,please add code below, we will must init sepcial default value manually.
+Example:
+    - (instancetype)init
+    {
+        self = [super init];
+        if (self) {
+            [self yy_resetAllPropertyValues];
+        }
+        return self;
+    }
+ */
+- (void)yy_resetAllPropertyValues;
+
 @end
 
 
@@ -385,7 +408,52 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSArray<NSString *> *)modelPropertyWhitelist;
 
 /**
- This method's behavior is similar to `- (BOOL)modelCustomTransformFromDictionary:(NSDictionary *)dic;`, 
+ Custom property default value mapper.
+ 
+ @discussion If a property has special default value, set the mapper with this method.
+ When dict(json) to object, if the dict[@"key"] is NSNull, the value of associated property will be reset to default.
+
+ Example for _type:
+ YYEncodingTypeIsCNumber ->@(-1)...
+ YYEncodingTypeObject-> value with subclass of NSObject
+ YYEncodingTypeClass -> [XXX class]
+ YYEncodingTypeSEL -> NSStringFromSelector(@selector(test))
+ YYEncodingTypeBlock -> just block
+ 
+ YYEncodingTypePointer -> NSValue
+ YYEncodingTypeStruct -> NSValue
+ YYEncodingTypeUnion -> NSValue
+ YYEncodingTypeCString -> NSValue
+ YYEncodingTypeCArray -> NSValue
+
+ Example:
+
+ json:
+ {
+ "name":null
+ }
+
+ model:
+ @interface YYBook : NSObject
+ @property NSString *name;
+ @property Class cls;
+ @end
+ 
+ @implementation YYBook
+ + (NSDictionary *)modelCustomPropertyDefaultValueMapper {
+ return @{
+          @"name"  : @"god",
+          @"cls"   : [YYBook class]
+        };
+ }
+ @end
+ 
+ @return A custom mapper for properties.
+ */
++ (nullable NSDictionary<NSString *,id> *)modelCustomPropertyDefaultValueMapper;
+
+/**
+ This method's behavior is similar to `- (BOOL)modelCustomTransformFromDictionary:(NSDictionary *)dic;`,
  but be called before the model transform.
  
  @discussion If the model implements this method, it will be called before
