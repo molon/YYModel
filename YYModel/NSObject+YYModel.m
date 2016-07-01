@@ -732,10 +732,10 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_rdlock(&yymodel_rwlock));
     _YYModelMeta *meta = CFDictionaryGetValue(yymodel_cache, (__bridge const void *)(cls));
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
-    if (!meta || meta->_classInfo.needUpdate) {
+    if (!meta || meta->_classInfo.needsUpdate) {
         YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&yymodel_rwlock));
         meta = CFDictionaryGetValue(yymodel_cache, (__bridge const void *)(cls));
-        if (!meta || meta->_classInfo.needUpdate) {
+        if (!meta || meta->_classInfo.needsUpdate) {
             meta = [[_YYModelMeta alloc] initWithClass:cls];
             if (meta) {
                 CFDictionarySetValue(yymodel_cache, (__bridge const void *)(cls), (__bridge const void *)(meta));

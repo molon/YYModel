@@ -259,7 +259,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
 @end
 
 @implementation YYClassInfo {
-    BOOL _needUpdate;
+    BOOL _needsUpdate;
 }
 
 - (instancetype)initWithClass:(Class)cls {
@@ -323,7 +323,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
     if (!_methodInfos) _methodInfos = @{};
     if (!_propertyInfos) _propertyInfos = @{};
     
-    _needUpdate = NO;
+    _needsUpdate = NO;
 }
 
 static CFMutableDictionaryRef yymodel_classCache;
@@ -340,17 +340,17 @@ static pthread_rwlock_t yymodel_rwlock;
     });
 }
 
-- (void)setNeedUpdate {
+- (void)setNeedsUpdate {
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&yymodel_rwlock));
-    _needUpdate = YES;
+    _needsUpdate = YES;
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
 }
 
-- (BOOL)needUpdate {
+- (BOOL)needsUpdate {
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_rdlock(&yymodel_rwlock));
-    BOOL needUpdate = _needUpdate;
+    BOOL needsUpdate = _needsUpdate;
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
-    return needUpdate;
+    return needsUpdate;
 }
 
 + (instancetype)classInfoWithClass:(Class)cls {
@@ -358,12 +358,12 @@ static pthread_rwlock_t yymodel_rwlock;
     
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_rdlock(&yymodel_rwlock));
     YYClassInfo *info = CFDictionaryGetValue(class_isMetaClass(cls) ? yymodel_metaCache : yymodel_classCache, (__bridge const void *)(cls));
-    BOOL needUpdate = info && info->_needUpdate;
+    BOOL needsUpdate = info && info->_needsUpdate;
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
     
-    if (needUpdate) {
+    if (needsUpdate) {
         YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&yymodel_rwlock));
-        if (info->_needUpdate) {
+        if (info->_needsUpdate) {
             [info _update];
         }
         YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));

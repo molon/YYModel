@@ -103,7 +103,7 @@ typedef union yy_union{ char a; int b;} yy_union;
 
 - (void)testClassInfoCache {
     YYClassInfo *info1 = [YYClassInfo classInfoWithClass:[YYTestPropertyModel class]];
-    [info1 setNeedUpdate];
+    [info1 setNeedsUpdate];
     YYClassInfo *info2 = [YYClassInfo classInfoWithClassName:@"YYTestPropertyModel"];
     XCTAssertNotNil(info1);
     XCTAssertNotNil(info2);
