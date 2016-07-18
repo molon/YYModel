@@ -137,6 +137,7 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding);
 @property (nonatomic, strong, readonly) NSString *ivarName;       ///< property's ivar name
 @property (nullable, nonatomic, assign, readonly) Class cls;      ///< may be nil
 @property (nullable, nonatomic, strong, readonly) NSArray *protocolNames; ///< may be nil
+@property (nullable, nonatomic, assign, readonly) Class pseudoGenericCls; ///< may be nil
 
 @property (nonatomic, assign, readonly) SEL getter;               ///< getter (nonnull)
 @property (nonatomic, assign, readonly) SEL setter;               ///< setter (nonnull)

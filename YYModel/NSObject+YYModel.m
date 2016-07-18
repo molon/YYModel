@@ -439,14 +439,8 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
             meta->_nsType == YYEncodingTypeNSSet||
             meta->_nsType == YYEncodingTypeNSMutableSet;
         if (meta->_isContainer && !generic && propertyInfo.protocolNames.count > 0) {
-            //support pseudo generic class with protocol name
-            for (NSString *protocol in propertyInfo.protocolNames) {
-                Class cls = objc_getClass(protocol.UTF8String);
-                if (cls) {
-                    generic = cls;
-                    break;
-                }
-            }
+            //support pseudo generic class only for container class
+            generic = propertyInfo.pseudoGenericCls;
         }
     } else {
         meta->_isCNumber = YYEncodingTypeIsCNumber(meta->_type);

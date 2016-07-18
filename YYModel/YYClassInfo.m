@@ -193,6 +193,15 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
                                     //so we just record the protocol names
                                     NSString *pNames = [NSString stringWithUTF8String:p];
                                     _protocolNames = [pNames componentsSeparatedByString:@"><"];
+                                    
+                                    //pseudo generic class
+                                    for (NSString *protocol in _protocolNames) {
+                                        Class cls = objc_getClass(protocol.UTF8String);
+                                        if (cls) {
+                                            _pseudoGenericCls = cls;
+                                            break;
+                                        }
+                                    }
                                 }
                             }else{
                                 _cls = objc_getClass(name);
