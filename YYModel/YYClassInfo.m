@@ -401,34 +401,28 @@ static pthread_rwlock_t yymodel_rwlock;
 
 @implementation NSObject (YYClassInfo)
 
-+ (BOOL)yy_containsPropertyKey:(NSString*)propertyKey
-{
++ (BOOL)yy_containsPropertyKey:(NSString*)propertyKey {
     return [self yy_containsPropertyKey:propertyKey untilClass:[NSObject class] ignoreUntilClass:YES];
 }
 
-+ (BOOL)yy_containsPropertyKey:(NSString*)propertyKey untilClass:(Class)untilCls
-{
++ (BOOL)yy_containsPropertyKey:(NSString*)propertyKey untilClass:(Class)untilCls {
     return [self yy_containsPropertyKey:propertyKey untilClass:untilCls ignoreUntilClass:NO];
 }
 
-+ (BOOL)yy_containsPropertyKey:(NSString*)propertyKey untilClass:(Class)untilCls ignoreUntilClass:(BOOL)ignoreUntilCls
-{
++ (BOOL)yy_containsPropertyKey:(NSString*)propertyKey untilClass:(Class)untilCls ignoreUntilClass:(BOOL)ignoreUntilCls {
     NSDictionary<NSString *, YYClassPropertyInfo *> *propertyInfos = [self yy_propertyInfosUntilClass:untilCls ignoreUntilClass:ignoreUntilCls];
     return (propertyInfos[propertyKey]!=nil);
 }
 
-+ (NSDictionary<NSString *, YYClassPropertyInfo *> *)yy_propertyInfos
-{
++ (NSDictionary<NSString *, YYClassPropertyInfo *> *)yy_propertyInfos {
     return [self yy_propertyInfosUntilClass:[NSObject class] ignoreUntilClass:YES];
 }
 
-+ (NSDictionary<NSString *, YYClassPropertyInfo *> *)yy_propertyInfosUntilClass:(Class)untilCls
-{
++ (NSDictionary<NSString *, YYClassPropertyInfo *> *)yy_propertyInfosUntilClass:(Class)untilCls {
     return [self yy_propertyInfosUntilClass:untilCls ignoreUntilClass:NO];
 }
 
-+ (NSDictionary<NSString *, YYClassPropertyInfo *> *)yy_propertyInfosUntilClass:(Class)untilCls ignoreUntilClass:(BOOL)ignoreUntilCls
-{
++ (NSDictionary<NSString *, YYClassPropertyInfo *> *)yy_propertyInfosUntilClass:(Class)untilCls ignoreUntilClass:(BOOL)ignoreUntilCls {
     NSAssert(untilCls, @"The `cls` param of yy_propertyInfosUntilClass:ignoreUntilClass: cant be nil!");
     NSAssert([[self class] isSubclassOfClass:untilCls], @"%@ is not the subclass of %@",NSStringFromClass([self class]),NSStringFromClass(untilCls));
     

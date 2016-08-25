@@ -526,6 +526,25 @@ Example:
  */
 + (nullable NSDictionary<NSString *, id> *)modelCustomPropertyMapperForClass:(Class)cls;
 
+/**
+ Custom transform behavior for model class, if returns nil, the default transform behavior would be continue excuted.
+ 
+ @param value value Should not be nil, but can be NSNull.
+ @param cls   cls
+ 
+ @return transformed value
+ */
++ (nullable id)modelCustomTransformFromValue:(id)value modelClass:(Class)cls;
+
+/**
+ Custom transform to JSONObject behavior for class, if returns nil, the default transform behavior would be continue excuted.
+ 
+ @param model model Should not be nil or NSNull
+ 
+ @return JSONObject
+ */
++ (nullable id)JSONObjectCustomTransformFromModel:(id)model;
+
 @end
 
 NS_ASSUME_NONNULL_END

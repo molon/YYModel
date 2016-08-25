@@ -323,8 +323,7 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     Class _protocolClass;
 }
 
-+ (instancetype)center
-{
++ (instancetype)center {
     static YYModelTransformProtocol *_center = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -334,18 +333,15 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     return _center;
 }
 
-+ (void)registerClass:(Class)cls
-{
++ (void)registerClass:(Class)cls {
     [[self center]registerClass:cls];
 }
 
-+ (void)unregisterClass
-{
++ (void)unregisterClass {
     [[self center]unregisterClass];
 }
 
-- (void)registerClass:(Class)cls
-{
+- (void)registerClass:(Class)cls {
     NSAssert([cls isSubclassOfClass:[YYModelTransformProtocol class]], @"Register transform class must be subclass of \'YYModelTransformProtocol\'");
     
     //We must clean the cached model class meta,
@@ -364,8 +360,7 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
 }
 
-- (void)unregisterClass
-{
+- (void)unregisterClass {
     //We must clean the cached model class meta,
     //Because maybe the cache is all not correct after new protocol class set.
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&yymodel_rwlock));
@@ -382,8 +377,15 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     YYMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
 }
 
-+ (nullable NSDictionary<NSString *, id> *)modelCustomPropertyMapperForClass:(Class)cls
-{
++ (nullable NSDictionary<NSString *, id> *)modelCustomPropertyMapperForClass:(Class)cls {
+    return nil;
+}
+
++ (id)modelCustomTransformFromValue:(id)value modelClass:(Class)cls {
+    return nil;
+}
+
++ (id)JSONObjectCustomTransformFromModel:(id)model {
     return nil;
 }
 
@@ -889,6 +891,14 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
             value = meta->_defaultValue;
         }
         
+        if (meta->_cls) {
+            id customResult = [[YYModelTransformProtocol center]->_protocolClass modelCustomTransformFromValue:value modelClass:meta->_cls];
+            if (customResult) {
+                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, customResult);
+                return;
+            }
+        }
+        
         if (meta->_nsType) {
             if (value == (id)kCFNull) {
                 ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)nil);
@@ -1116,7 +1126,6 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
             switch (meta->_type & YYEncodingTypeMask) {
                 case YYEncodingTypeObject: {
                     if (isNull) {
-                        
                         ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)nil);
                     } else if ([value isKindOfClass:meta->_cls] || !meta->_cls) {
                         ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, (id)value);
@@ -1271,6 +1280,12 @@ static void ModelSetWithPropertyMetaArrayFunction(const void *_propertyMeta, voi
  */
 static id ModelToJSONObjectRecursive(NSObject *model) {
     if (!model || model == (id)kCFNull) return model;
+    
+    id customJSONObject = [[YYModelTransformProtocol center]->_protocolClass JSONObjectCustomTransformFromModel:model];
+    if (customJSONObject) {
+        return customJSONObject;
+    }
+    
     if ([model isKindOfClass:[NSString class]]) return model;
     if ([model isKindOfClass:[NSNumber class]]) return model;
     if ([model isKindOfClass:[NSDictionary class]]) {
