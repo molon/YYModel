@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = 'MLPersonalModel'
   s.summary      = 'Personal Pod, Improved Fork of YYModel, Please dont use it.'
-  s.version      = '11.0.4'
+  s.version      = '11.1.0'
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.authors      = { 'ibireme' => 'ibireme@gmail.com' }
   s.social_media_url = 'http://blog.ibireme.com'
