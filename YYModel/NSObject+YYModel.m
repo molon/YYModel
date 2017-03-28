@@ -130,7 +130,7 @@ static force_inline NSNumber *YYNSNumberCreateFromID(__unsafe_unretained id valu
         } else {
             const char *cstring = ((NSString *)value).UTF8String;
             if (!cstring) return nil;
-            return @(atoll(cstring));
+            return @(strtoull(cstring, NULL, 0));
         }
     }
     return nil;
