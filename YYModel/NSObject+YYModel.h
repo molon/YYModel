@@ -136,12 +136,31 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Generate a json object from the receiver's properties.
  
+ @param rootSelf whether return itself if self is (NSString, NSNumber).
+ 
+ @return A json object in `NSDictionary` or `NSArray`, or (NSString, NSNumber, nil) if self is (NSString, NSNumber, invalid property).
+ 
+ @warning If returns not `NSDictionary` or `NSArray`, it's not a valid json object, See [NSJSONSerialization isValidJSONObject] for more information.
+ 
+ @see -yy_modelToJSONObject
+ 
+ @discussion Any of the invalid property is ignored.
+ If the reciver is `NSArray`, `NSDictionary` or `NSSet`, it just convert
+ the inner object to json object.
+ */
+- (id)yy_modelToJSONObjectOrRootSelf:(BOOL)rootSelf;
+
+/**
+ Generate a json object from the receiver's properties.
+ 
  @return A json object in `NSDictionary` or `NSArray`, or nil if an error occurs.
  See [NSJSONSerialization isValidJSONObject] for more information.
  
  @discussion Any of the invalid property is ignored.
  If the reciver is `NSArray`, `NSDictionary` or `NSSet`, it just convert
  the inner object to json object.
+ 
+ Equals to yy_modelToJSONObjectOrRootSelf:NO
  */
 - (nullable id)yy_modelToJSONObject;
 

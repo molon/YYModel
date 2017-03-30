@@ -1647,6 +1647,10 @@ static NSString *ModelDescription(NSObject *model) {
 }
 
 - (id)yy_modelToJSONObject {
+    return [self yy_modelToJSONObjectOrRootSelf:NO];
+}
+
+- (id)yy_modelToJSONObjectOrRootSelf:(BOOL)rootSelf {
     /*
      Apple said:
      The top level object is an NSArray or NSDictionary.
@@ -1657,7 +1661,7 @@ static NSString *ModelDescription(NSObject *model) {
     id jsonObject = ModelToJSONObjectRecursive(self);
     if ([jsonObject isKindOfClass:[NSArray class]]) return jsonObject;
     if ([jsonObject isKindOfClass:[NSDictionary class]]) return jsonObject;
-    return nil;
+    return rootSelf?jsonObject:nil;
 }
 
 - (NSData *)yy_modelToJSONData {
