@@ -876,9 +876,11 @@ static force_inline void ModelSetNumberToProperty(__unsafe_unretained id model,
  @param meta  Should not be nil, and meta->_setter should not be nil.
  */
 static void ModelSetValueForProperty(__unsafe_unretained id model,
-                                     __unsafe_unretained id value,
+                                     __unsafe_unretained id originalValue,
                                      __unsafe_unretained _YYModelPropertyMeta *meta) {
 
+    NS_VALID_UNTIL_END_OF_SCOPE id value = originalValue;
+    
     if (meta->_isCNumber) {
         NSNumber *num = YYNSNumberCreateFromID(value);
         if (!num&&[meta->_defaultValue isKindOfClass:[NSNumber class]]) {
