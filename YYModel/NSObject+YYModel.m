@@ -381,11 +381,11 @@ static force_inline id YYValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     return nil;
 }
 
-+ (id)modelCustomTransformFromValue:(id)value modelClass:(Class)cls {
++ (id)newValueBeforeTransformFromValue:(id)value modelClass:(Class)cls modelKey:(NSString*)modelKey {
     return nil;
 }
 
-+ (id)JSONObjectCustomTransformFromModel:(id)model {
++ (id)newModelBeforeTransformFromModel:(id)model modelKey:(NSString*)modelKey {
     return nil;
 }
 
@@ -892,10 +892,9 @@ static void ModelSetValueForProperty(__unsafe_unretained id model,
         }
         
         if (meta->_cls) {
-            id customResult = [[YYModelTransformProtocol center]->_protocolClass modelCustomTransformFromValue:value modelClass:meta->_cls];
-            if (customResult) {
-                ((void (*)(id, SEL, id))(void *) objc_msgSend)((id)model, meta->_setter, customResult);
-                return;
+            id newValue = [[YYModelTransformProtocol center]->_protocolClass newValueBeforeTransformFromValue:value modelClass:meta->_cls modelKey:meta->_name];
+            if (newValue) {
+                value = newValue;
             }
         }
         
@@ -1276,14 +1275,15 @@ static void ModelSetWithPropertyMetaArrayFunction(const void *_propertyMeta, voi
  or nil if an error occurs.
  
  @param model Model, can be nil.
+ @param modelKey can be nil
  @return JSON object, nil if an error occurs.
  */
-static id ModelToJSONObjectRecursive(NSObject *model) {
+static id ModelToJSONObjectRecursive(NSObject *model,NSString *modelKey) {
     if (!model || model == (id)kCFNull) return model;
     
-    id customJSONObject = [[YYModelTransformProtocol center]->_protocolClass JSONObjectCustomTransformFromModel:model];
-    if (customJSONObject) {
-        return customJSONObject;
+    id newModel = [[YYModelTransformProtocol center]->_protocolClass newModelBeforeTransformFromModel:model modelKey:modelKey];
+    if (newModel) {
+        model = newModel;
     }
     
     if ([model isKindOfClass:[NSString class]]) return model;
@@ -1294,7 +1294,7 @@ static id ModelToJSONObjectRecursive(NSObject *model) {
         [((NSDictionary *)model) enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop) {
             NSString *stringKey = [key isKindOfClass:[NSString class]] ? key : key.description;
             if (!stringKey) return;
-            id jsonObj = ModelToJSONObjectRecursive(obj);
+            id jsonObj = ModelToJSONObjectRecursive(obj,stringKey);
             if (!jsonObj) jsonObj = (id)kCFNull;
             newDic[stringKey] = jsonObj;
         }];
@@ -1308,7 +1308,7 @@ static id ModelToJSONObjectRecursive(NSObject *model) {
             if ([obj isKindOfClass:[NSString class]] || [obj isKindOfClass:[NSNumber class]]) {
                 [newArray addObject:obj];
             } else {
-                id jsonObj = ModelToJSONObjectRecursive(obj);
+                id jsonObj = ModelToJSONObjectRecursive(obj,nil);
                 if (jsonObj && jsonObj != (id)kCFNull) [newArray addObject:jsonObj];
             }
         }
@@ -1321,7 +1321,7 @@ static id ModelToJSONObjectRecursive(NSObject *model) {
             if ([obj isKindOfClass:[NSString class]] || [obj isKindOfClass:[NSNumber class]]) {
                 [newArray addObject:obj];
             } else {
-                id jsonObj = ModelToJSONObjectRecursive(obj);
+                id jsonObj = ModelToJSONObjectRecursive(obj,nil);
                 if (jsonObj && jsonObj != (id)kCFNull) [newArray addObject:jsonObj];
             }
         }
@@ -1345,12 +1345,12 @@ static id ModelToJSONObjectRecursive(NSObject *model) {
             value = ModelCreateNumberFromProperty(model, propertyMeta);
         } else if (propertyMeta->_nsType) {
             id v = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, propertyMeta->_getter);
-            value = ModelToJSONObjectRecursive(v);
+            value = ModelToJSONObjectRecursive(v,propertyMeta->_name);
         } else {
             switch (propertyMeta->_type & YYEncodingTypeMask) {
                 case YYEncodingTypeObject: {
                     id v = ((id (*)(id, SEL))(void *) objc_msgSend)((id)model, propertyMeta->_getter);
-                    value = ModelToJSONObjectRecursive(v);
+                    value = ModelToJSONObjectRecursive(v,propertyMeta->_name);
                     if (value == (id)kCFNull) value = nil;
                 } break;
                 case YYEncodingTypeClass: {
@@ -1658,7 +1658,7 @@ static NSString *ModelDescription(NSObject *model) {
      All dictionary keys are instances of NSString.
      Numbers are not NaN or infinity.
      */
-    id jsonObject = ModelToJSONObjectRecursive(self);
+    id jsonObject = ModelToJSONObjectRecursive(self,nil);
     if ([jsonObject isKindOfClass:[NSArray class]]) return jsonObject;
     if ([jsonObject isKindOfClass:[NSDictionary class]]) return jsonObject;
     return rootSelf?jsonObject:nil;
