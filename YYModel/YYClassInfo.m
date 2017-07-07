@@ -173,18 +173,18 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
                         size_t len = strlen(attrs[i].value);
                         if (len > 3) {
                             len = len - 3 + 1;
-                            char name[len];
-                            name[len - 1] = '\0';
-                            memcpy(name, attrs[i].value + 2, len - 1);
+                            char clsName[len];
+                            clsName[len - 1] = '\0';
+                            memcpy(clsName, attrs[i].value + 2, len - 1);
                             
                             //It has protocols if the final char is >.
-                            //if multi protocols, the name maybe is NSMutableArray<Pig><Dog><Cat>
-                            if (name[len - 2] == '>') {
-                                name[len - 2] = '\0';
-                                char *p = strchr(name, '<');
+                            //if multi protocols, the clsName maybe is NSMutableArray<Pig><Dog><Cat>
+                            if (clsName[len - 2] == '>') {
+                                clsName[len - 2] = '\0';
+                                char *p = strchr(clsName, '<');
                                 if (p != NULL) {
                                     p[0] = '\0';
-                                    _cls = objc_getClass(name);
+                                    _cls = objc_getClass(clsName);
                                     
                                     p++;
                                     //p maybe contain multi protocol names. maybe is Pig><Dog><Cat
@@ -204,10 +204,10 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
                                     }
                                 }
                             }else{
-                                _cls = objc_getClass(name);
+                                _cls = objc_getClass(clsName);
                             }
                             
-                            NSAssert(_cls!=nil, @"Error: Class %s maybe has not a implementation",name);
+                            NSAssert((_cls!=nil&&strlen(clsName)>0)||(_cls==nil&&strlen(clsName)<=0), @"Error: Class %s maybe has not a implementation",clsName);
                         }
                     }
                 }
