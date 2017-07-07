@@ -206,6 +206,8 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding) {
                             }else{
                                 _cls = objc_getClass(name);
                             }
+                            
+                            NSAssert(_cls!=nil, @"Error: Class %s maybe has not a implementation",name);
                         }
                     }
                 }
