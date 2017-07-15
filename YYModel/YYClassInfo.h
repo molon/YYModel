@@ -260,7 +260,6 @@ YYEncodingType YYEncodingGetType(const char *typeEncoding);
 /**
  Returns all property infos in the class(or its superclass).
  
- @param propertyKey a property key maybe exist
  @param untilCls the last superclass which will be ignored or not
  @param ignoreUntilCls indicates whether the untilCls will be ignored
  

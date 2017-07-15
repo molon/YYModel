@@ -872,7 +872,7 @@ static force_inline void ModelSetNumberToProperty(__unsafe_unretained id model,
  @discussion Caller should hold strong reference to the parameters before this function returns.
  
  @param model Should not be nil.
- @param value Should not be nil, but can be NSNull.
+ @param originalValue Should not be nil, but can be NSNull.
  @param meta  Should not be nil, and meta->_setter should not be nil.
  */
 static void ModelSetValueForProperty(__unsafe_unretained id model,

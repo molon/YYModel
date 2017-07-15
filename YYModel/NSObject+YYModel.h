@@ -29,19 +29,19 @@ NS_ASSUME_NONNULL_BEGIN
  Sample Code:
     
      ********************** json convertor *********************
-     @interface YYAuthor : NSObject
+     interface YYAuthor : NSObject
      @property (nonatomic, strong) NSString *name;
      @property (nonatomic, assign) NSDate *birthday;
      @end
-     @implementation YYAuthor
+     implementation YYAuthor
      @end
  
-     @interface YYBook : NSObject
+     interface YYBook : NSObject
      @property (nonatomic, copy) NSString *name;
      @property (nonatomic, assign) NSUInteger pages;
      @property (nonatomic, strong) YYAuthor *author;
      @end
-     @implementation YYBook
+     implementation YYBook
      @end
     
      int main() {
@@ -54,12 +54,12 @@ NS_ASSUME_NONNULL_BEGIN
      }
  
      ********************** Coding/Copying/hash/equal *********************
-     @interface YYShadow :NSObject <NSCoding, NSCopying>
+     interface YYShadow :NSObject <NSCoding, NSCopying>
      @property (nonatomic, copy) NSString *name;
      @property (nonatomic, assign) CGSize size;
      @end
  
-     @implementation YYShadow
+     implementation YYShadow
      - (void)encodeWithCoder:(NSCoder *)aCoder { [self yy_modelEncodeWithCoder:aCoder]; }
      - (id)initWithCoder:(NSCoder *)aDecoder { self = [super init]; return [self yy_modelInitWithCoder:aDecoder]; }
      - (id)copyWithZone:(NSZone *)zone { return [self yy_modelCopy]; }
@@ -327,14 +327,14 @@ Example:
         }
  
     model:
-        @interface YYBook : NSObject
+        interface YYBook : NSObject
         @property NSString *name;
         @property NSInteger page;
         @property NSString *desc;
         @property NSString *bookID;
         @end
         
-        @implementation YYBook
+        implementation YYBook
         + (NSDictionary *)modelCustomPropertyMapper {
             return @{@"name"  : @"n",
                      @"page"  : @"p",
@@ -355,16 +355,16 @@ Example:
  object will be add to the array/set/dictionary.
  
   Example:
-        @class YYShadow, YYBorder, YYAttachment;
+        class YYShadow, YYBorder, YYAttachment;
  
-        @interface YYAttributes
+        interface YYAttributes
         @property NSString *name;
         @property NSArray *shadows;
         @property NSSet *borders;
         @property NSDictionary *attachments;
         @end
  
-        @implementation YYAttributes
+        implementation YYAttributes
         + (NSDictionary *)modelContainerPropertyGenericClass {
             return @{@"shadows" : [YYShadow class],
                      @"borders" : YYBorder.class,
@@ -385,9 +385,9 @@ Example:
  (both singular and containers via `+modelContainerPropertyGenericClass`).
  
  Example:
-        @class YYCircle, YYRectangle, YYLine;
+        class YYCircle, YYRectangle, YYLine;
  
-        @implementation YYShape
+        implementation YYShape
 
         + (Class)modelCustomClassForDictionary:(NSDictionary*)dictionary {
             if (dictionary[@"radius"] != nil) {
@@ -453,12 +453,12 @@ Example:
  }
 
  model:
- @interface YYBook : NSObject
+ interface YYBook : NSObject
  @property NSString *name;
  @property Class cls;
  @end
  
- @implementation YYBook
+ implementation YYBook
  + (NSDictionary *)modelCustomPropertyDefaultValueMapper {
  return @{
           @"name"  : @"god",
