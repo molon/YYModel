@@ -119,7 +119,7 @@ SET_NUM(_following, @"following");
 
 
 
-@implementation YYGHUser
+@implementation XXGHUser
 + (NSDictionary *)modelCustomPropertyMapper {
     return @{
         @"userID" : @"id",
@@ -142,8 +142,8 @@ SET_NUM(_following, @"following");
         @"updatedAt" : @"updated_at",
     };
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder { [self yy_modelEncodeWithCoder:aCoder]; }
-- (id)initWithCoder:(NSCoder *)aDecoder { return [self yy_modelInitWithCoder:aDecoder]; }
+- (void)encodeWithCoder:(NSCoder *)aCoder { [self xx_modelEncodeWithCoder:aCoder]; }
+- (id)initWithCoder:(NSCoder *)aDecoder { return [self xx_modelInitWithCoder:aDecoder]; }
 @end
 
 

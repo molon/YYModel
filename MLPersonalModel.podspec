@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = 'MLPersonalModel'
   s.summary      = 'Personal Pod, Improved Fork of YYModel, Please dont use it.'
-  s.version      = '11.2.1'
+  s.version      = '12.2.1'
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.authors      = { 'ibireme' => 'ibireme@gmail.com' }
   s.social_media_url = 'http://blog.ibireme.com'
@@ -15,8 +15,8 @@ Pod::Spec.new do |s|
   s.source       = { :git => 'https://github.com/molon/YYModel.git', :tag => s.version.to_s }
   
   s.requires_arc = true
-  s.source_files = 'YYModel/*.{h,m}'
-  s.public_header_files = 'YYModel/*.{h}'
+  s.source_files = 'XXModel/*.{h,m}'
+  s.public_header_files = 'XXModel/*.{h}'
   
   s.frameworks = 'Foundation', 'CoreFoundation'
 

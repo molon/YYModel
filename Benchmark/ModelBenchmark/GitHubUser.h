@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 ibireme. All rights reserved.
 //
 
-#import "YYModel.h"
+#import "XXModel.h"
 #import "Mantle.h"
 #import "JSONModelLib.h"
 #import "FastEasyMapping.h"
@@ -51,8 +51,8 @@
 - (NSDictionary *)convertToJSONDictionary;
 @end
 
-/// YYModel GHUser
-@interface YYGHUser : NSObject <NSCoding>
+/// XXModel GHUser
+@interface XXGHUser : NSObject <NSCoding>
 @property (nonatomic, strong) NSString *login;
 @property (nonatomic, assign) UInt64 userID;
 @property (nonatomic, strong) NSString *avatarURL;

@@ -10,7 +10,7 @@
 #import "ViewController.h"
 #import "DateFormatter.h"
 #import "GitHubUser.h"
-#import "YYWeiboModel.h"
+#import "XXWeiboModel.h"
 #import "FEWeiboModel.h"
 #import "MTWeiboModel.h"
 #import "JSWeiboModel.h"
@@ -19,7 +19,7 @@
 
 /*
  Benchmark: (update to 2016-01-15)
- YYModel: https://github.com/ibireme/YYKit
+ XXModel: https://github.com/ibireme/XXKit
  Mantle: https://github.com/Mantle/Mantle
  JSONModel: https://github.com/icanzilb/JSONModel
  FastEasyMapping: https://github.com/Yalantis/FastEasyMapping
@@ -70,8 +70,8 @@
             // Manually
             [[[[GHUser alloc] initWithJSONDictionary:json] description] length];
             
-            // YYModel
-            [YYGHUser yy_modelWithJSON:json];
+            // XXModel
+            [XXGHUser xx_modelWithJSON:json];
             
             // FastEasyMapping
             [FEMDeserializer fillObject:[FEGHUser new] fromRepresentation:json mapping:mapping];
@@ -140,21 +140,21 @@
         printf("%8.2f\n", (end - begin) * 1000);
     }
     
-    /*------------------- YYModel -------------------*/
+    /*------------------- XXModel -------------------*/
     {
         [holder removeAllObjects];
         begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                YYGHUser *user = [YYGHUser yy_modelWithJSON:json];
+                XXGHUser *user = [XXGHUser xx_modelWithJSON:json];
                 [holder addObject:user];
             }
         }
         end = CACurrentMediaTime();
-        printf("YYModel:         %8.2f   ", (end - begin) * 1000);
+        printf("XXModel:         %8.2f   ", (end - begin) * 1000);
         
         
-        YYGHUser *user = [YYGHUser yy_modelWithJSON:json];
+        XXGHUser *user = [XXGHUser xx_modelWithJSON:json];
         if (user.userID == 0) NSLog(@"error!");
         if (!user.login) NSLog(@"error!");
         if (!user.htmlURL) NSLog(@"error");
@@ -163,12 +163,12 @@
         begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                NSDictionary *json = [user yy_modelToJSONObject];
+                NSDictionary *json = [user xx_modelToJSONObject];
                 [holder addObject:json];
             }
         }
         end = CACurrentMediaTime();
-        if ([NSJSONSerialization isValidJSONObject:[user yy_modelToJSONObject]]) {
+        if ([NSJSONSerialization isValidJSONObject:[user xx_modelToJSONObject]]) {
             printf("%8.2f   ", (end - begin) * 1000);
         } else {
             printf("   error   ");
@@ -394,8 +394,8 @@
     MTLJSONAdapter *adapter = [[MTLJSONAdapter alloc] initWithModelClass:[MTWeiboStatus class]];
     @autoreleasepool {
         for (int i = 0; i < count * 2; i++) {
-            // YYModel
-            [YYWeiboStatus yy_modelWithJSON:json];
+            // XXModel
+            [XXWeiboStatus xx_modelWithJSON:json];
             
             // FastEasyMapping
             [FEMDeserializer fillObject:[FEWeiboStatus new] fromRepresentation:json mapping:mapping];
@@ -419,31 +419,31 @@
     [holder removeAllObjects];
     
     
-    /*------------------- YYModel -------------------*/
+    /*------------------- XXModel -------------------*/
     {
         [holder removeAllObjects];
         begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                YYWeiboStatus *feed = [YYWeiboStatus yy_modelWithJSON:json];
+                XXWeiboStatus *feed = [XXWeiboStatus xx_modelWithJSON:json];
                 [holder addObject:feed];
             }
         }
         end = CACurrentMediaTime();
-        printf("YYModel:         %8.2f   ", (end - begin) * 1000);
+        printf("XXModel:         %8.2f   ", (end - begin) * 1000);
 
         
-        YYWeiboStatus *feed = [YYWeiboStatus yy_modelWithJSON:json];
+        XXWeiboStatus *feed = [XXWeiboStatus xx_modelWithJSON:json];
         [holder removeAllObjects];
         begin = CACurrentMediaTime();
         @autoreleasepool {
             for (int i = 0; i < count; i++) {
-                NSDictionary *json = [feed yy_modelToJSONObject];
+                NSDictionary *json = [feed xx_modelToJSONObject];
                 [holder addObject:json];
             }
         }
         end = CACurrentMediaTime();
-        if ([NSJSONSerialization isValidJSONObject:[feed yy_modelToJSONObject]]) {
+        if ([NSJSONSerialization isValidJSONObject:[feed xx_modelToJSONObject]]) {
             printf("%8.2f   ", (end - begin) * 1000);
         } else {
             printf("   error   ");
@@ -642,7 +642,7 @@
             if (!user) {
                 printf("⚠️ model is nil\n");
             } else {
-                NSString *type = ((YYGHUser *)user).type;
+                NSString *type = ((XXGHUser *)user).type;
                 if (type == nil || type == (id)[NSNull null]) {
                     printf("⚠️ property is nil\n");
                 } else if ([type isKindOfClass:[NSString class]]) {
@@ -653,9 +653,9 @@
             }
         };
         
-        // YYModel
-        YYGHUser *yyUser = [YYGHUser yy_modelWithJSON:json];
-        logError(@"YYModel:        ", yyUser);
+        // XXModel
+        XXGHUser *yyUser = [XXGHUser xx_modelWithJSON:json];
+        logError(@"XXModel:        ", yyUser);
         
         // FastEasyMapping
         FEGHUser *feUser = [FEGHUser new];
@@ -690,7 +690,7 @@
             if (!user) {
                 printf("⚠️ model is nil\n");
             } else {
-                UInt32 num = ((YYGHUser *)user).followers;
+                UInt32 num = ((XXGHUser *)user).followers;
                 if (num != 100) {
                     printf("🚫 property is %u\n",(unsigned int)num);
                 } else {
@@ -699,9 +699,9 @@
             }
         };
         
-        // YYModel
-        YYGHUser *yyUser = [YYGHUser yy_modelWithJSON:json];
-        logError(@"YYModel:        ", yyUser);
+        // XXModel
+        XXGHUser *yyUser = [XXGHUser xx_modelWithJSON:json];
+        logError(@"XXModel:        ", yyUser);
         
         // FastEasyMapping
         @try {
@@ -746,7 +746,7 @@
             if (!user) {
                 printf("⚠️ model is nil\n");
             } else {
-                NSDate *date = ((YYGHUser *)user).updatedAt;
+                NSDate *date = ((XXGHUser *)user).updatedAt;
                 if (date == nil || date == (id)[NSNull null]) {
                     printf("⚠️ property is nil\n");
                 } else if ([date isKindOfClass:[NSDate class]]) {
@@ -757,9 +757,9 @@
             }
         };
         
-        // YYModel
-        YYGHUser *yyUser = [YYGHUser yy_modelWithJSON:json];
-        logError(@"YYModel:        ", yyUser);
+        // XXModel
+        XXGHUser *yyUser = [XXGHUser xx_modelWithJSON:json];
+        logError(@"XXModel:        ", yyUser);
         
         // FastEasyMapping
         FEGHUser *feUser = [FEGHUser new];
@@ -795,7 +795,7 @@
             if (!user) {
                 printf("⚠️ model is nil\n");
             } else {
-                NSValue *valur = ((YYGHUser *)user).test;
+                NSValue *valur = ((XXGHUser *)user).test;
                 if (valur == nil || valur == (id)[NSNull null]) {
                     printf("✅ property is nil\n");
                 } else if ([valur isKindOfClass:[NSURLRequest class]]) {
@@ -805,9 +805,9 @@
                 }
             }
         };
-        // YYModel
-        YYGHUser *yyUser = [YYGHUser yy_modelWithJSON:json];
-        logError(@"YYModel:        ", yyUser);
+        // XXModel
+        XXGHUser *yyUser = [XXGHUser xx_modelWithJSON:json];
+        logError(@"XXModel:        ", yyUser);
         
         // FastEasyMapping
         FEGHUser *feUser = [FEGHUser new];
