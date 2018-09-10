@@ -17,8 +17,8 @@
 #define force_inline __inline__ __attribute__((always_inline))
 
 /// Returns the cached model class meta
-static CFMutableDictionaryRef yymodel_cache;
-static pthread_rwlock_t yymodel_rwlock;
+static CFMutableDictionaryRef xxmodel_cache;
+static pthread_rwlock_t xxmodel_rwlock;
 
 /// Foundation Class Type
 typedef NS_ENUM (NSUInteger, XXEncodingNSType) {
@@ -346,35 +346,35 @@ static force_inline id XXValueForMultiKeys(__unsafe_unretained NSDictionary *dic
     
     //We must clean the cached model class meta,
     //Because maybe the cache is all not correct after new protocol class set.
-    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&yymodel_rwlock));
+    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&xxmodel_rwlock));
     
     _protocolClass = cls;
     
     //release original
-    if (yymodel_cache) {
-        CFRelease(yymodel_cache);
+    if (xxmodel_cache) {
+        CFRelease(xxmodel_cache);
     }
     //Just recreate
-    yymodel_cache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    xxmodel_cache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     
-    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
+    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&xxmodel_rwlock));
 }
 
 - (void)unregisterClass {
     //We must clean the cached model class meta,
     //Because maybe the cache is all not correct after new protocol class set.
-    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&yymodel_rwlock));
+    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&xxmodel_rwlock));
     
     _protocolClass = [XXModelTransformProtocol class];
     
     //release original
-    if (yymodel_cache) {
-        CFRelease(yymodel_cache);
+    if (xxmodel_cache) {
+        CFRelease(xxmodel_cache);
     }
     //Just recreate
-    yymodel_cache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    xxmodel_cache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     
-    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
+    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&xxmodel_rwlock));
 }
 
 + (nullable NSDictionary<NSString *, id> *)modelCustomPropertyMapperForClass:(Class)cls {
@@ -718,26 +718,26 @@ static force_inline id XXValueForMultiKeys(__unsafe_unretained NSDictionary *dic
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        yymodel_cache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-        XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_init(&yymodel_rwlock, NULL));
+        xxmodel_cache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_init(&xxmodel_rwlock, NULL));
     });
 }
 
 + (instancetype)metaWithClass:(Class)cls {
     if (!cls) return nil;
-    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_rdlock(&yymodel_rwlock));
-    _XXModelMeta *meta = CFDictionaryGetValue(yymodel_cache, (__bridge const void *)(cls));
-    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
+    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_rdlock(&xxmodel_rwlock));
+    _XXModelMeta *meta = CFDictionaryGetValue(xxmodel_cache, (__bridge const void *)(cls));
+    XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&xxmodel_rwlock));
     if (!meta || meta->_classInfo.needsUpdate) {
-        XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&yymodel_rwlock));
-        meta = CFDictionaryGetValue(yymodel_cache, (__bridge const void *)(cls));
+        XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_wrlock(&xxmodel_rwlock));
+        meta = CFDictionaryGetValue(xxmodel_cache, (__bridge const void *)(cls));
         if (!meta || meta->_classInfo.needsUpdate) {
             meta = [[_XXModelMeta alloc] initWithClass:cls];
             if (meta) {
-                CFDictionarySetValue(yymodel_cache, (__bridge const void *)(cls), (__bridge const void *)(meta));
+                CFDictionarySetValue(xxmodel_cache, (__bridge const void *)(cls), (__bridge const void *)(meta));
             }
         }
-        XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&yymodel_rwlock));
+        XXMODEL_THREAD_ASSERT_ON_ERROR(pthread_rwlock_unlock(&xxmodel_rwlock));
     }
     return meta;
 }
